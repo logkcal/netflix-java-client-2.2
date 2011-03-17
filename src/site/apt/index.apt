@@ -1,0 +1,53 @@
+Welcome to the Netflix Java Client
+
+  The Netflix Java Client project aims to make interacting with the Netflix API simple and lightweight.  It is not an official or sanctioned Netflix project.
+  
+  The client is designed for ease of use and deployment into Java web applications, although stand-alone (i.e., non-web server) deployments are also supported.
+
+  Have fun,
+  
+  The Netflix Java Client Team
+
+Netflix Java Client Quick Start
+
+  In general, all you have to do is instantiate the client, give it a URI, some
+  query parameters (if any) to send, and what type of HTTP method (GET, POST, PUT, DELETE) to call:  
+
++------------------------------------------+
+  NetflixAPIClient apiClient = new NetflixAPIClient(myConsumerKey, myConsumerSecret);
+  String uri = "http://api.netflix.com/catalog/people";
+  HashMap<String, String> callParameters = new HashMap<String, String>();
+  callParameters.put("term", "Nathan Fillion");
+  String results = null;
+  try
+  {
+    NetflixAPIResponse response = apiClient.makeConsumerSignedApiCall(uri, callParameters,
+    	NetflixAPIClient.GET_METHOD_TYPE);
+    results = response.getResponseBody();
+    int statusCode = response.getStatusCode();
+    if (statusCode == 200)
+    {
+      // process normally
+    }
+    else
+    {
+      // display error to user
+    }
+  }
+  catch (NetflixAPIException nae)
+  {
+    // handle the error...
+  }
++------------------------------------------+
+
+  That's all there is to it!  The client has taken care of all the details: generating the OAuth signature, making the request, opening/closing 
+  the connection, and getting the results.
+  The Netflix client handles everything: setting the query string, creating the OAuth header, the whole shebang.  What you get back is an
+  object of the <<<NetflixAPIResponse>>> class, which contains the response body from the API server, plus the HTTP status code (and status line, like
+  <<<200 Ok>>>, if you want it).  This makes it easy to make a request, check for any errors, and respond accordingly.
+  
+  Note that in the above example, the uri string was set manually. We could have called <<<APIConstants.PEOPLE_URI>>>, but we wanted to show the flexibility
+  of the client.
+  
+  For more in-depth instructions, see the {{{./usage.html}Usage}} page.
+  

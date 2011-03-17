@@ -1,0 +1,377 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.lysergicjava.nfclient</groupId>
+	<artifactId>netflix-java-client</artifactId>
+	<packaging>jar</packaging>
+	<version>2.2</version>
+	<name>Netflix Java Client</name>
+	
+	<description>
+		The Netflix Java Client greatly simplifies interacting with the Netflix
+		API by hiding all the complexity involved in OAuth handshakes and HTTP
+		transport.
+		It also provides an easy way of obtaining OAuth access tokens.
+	</description>
+	<url>http://www.blueleftistconstructor.com/projects/nfjc/current</url>
+	
+	<properties>
+		<currentVersion>${pom.version}</currentVersion>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<scm>
+		<connection>scm:hg:http://www.blueleftistconstructor.com/hg/nfjc</connection>
+		<developerConnection>scm:hg:http://www.blueleftistconstructor.com/hg/nfjc</developerConnection>
+		<url>http://www.blueleftistconstructor.com/hg/nfjc</url>
+	</scm>
+
+	<licenses>
+		<license>
+			<name>Apache 2</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+			<comments>A business-friendly OSS license</comments>
+		</license>
+	</licenses>
+	
+	<issueManagement>
+		<system>Atlassian Jira</system>
+		<url>http://jira.blueleftistconstructor.com/browse/NFJC</url>
+	</issueManagement>
+	
+	<ciManagement>
+		<system>Hudson</system>
+		<url>http://hudson.blueleftistconstructor.com/jobs/NFJC</url>
+	</ciManagement>
+
+	<developers>
+		<developer>
+			<id>jharen</id>
+			<name>John Haren</name>
+			<email>jharen@lysergicjava.com</email>
+			<organization>Lysergic Java</organization>
+			<organizationUrl>http://www.lysergicjava.com</organizationUrl>
+			<roles>
+				<role>project lead</role>
+				<role>developer</role>
+				<role>tester</role>
+			</roles>
+			<timezone>8</timezone>
+		</developer>
+		<developer>
+			<id>ottaway</id>
+			<name>Rob Ottaway</name>
+			<email>robottaway@gmail.com</email>
+			<organization>blueleftistconstructor</organization>
+			<organizationUrl>http://www.blueleftistconstructor.com/</organizationUrl>
+			<roles>
+				<role>developer</role>
+			</roles>
+			<timezone>8</timezone>
+		</developer>
+	</developers>
+	
+	<organization>
+		<name>Lysergic Java</name>
+		<url>http://www.lysergicjava.com</url>
+	</organization>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<source>1.5</source>
+					<target>1.5</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.5</version>
+				<configuration>
+					<systemProperties>
+						<property>
+							<name>slf4j.configuration</name>
+							<value>src/test/resources/logback.xml</value>
+						</property>
+					</systemProperties>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<version>2.1.1</version>
+				<configuration>
+					<outputEncoding>UTF-8</outputEncoding>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.mortbay.jetty</groupId>
+				<artifactId>maven-jetty-plugin</artifactId>
+				<version>6.1.25</version>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>cobertura-maven-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<instrumentation>
+						<excludes>
+							<exclude>com/lysergicjava/**/*Test.class</exclude>
+						</excludes>
+					</instrumentation>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>clean</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>2.1</version>
+			</plugin>
+			<plugin>
+        		<groupId>org.apache.maven.plugins</groupId>
+        		<artifactId>maven-assembly-plugin</artifactId>
+        		<version>2.2</version>
+        		<configuration>
+					<descriptorRefs>
+						<descriptorRef>src</descriptorRef>
+					</descriptorRefs>
+				</configuration>
+      		</plugin>
+		</plugins>
+	</build>
+
+	<!-- Use this profile to allow integration tests to run -->
+	<profiles>
+		<profile>
+			<id>no_integration_testing</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-surefire-plugin
+						</artifactId>
+						<configuration>
+							<excludes>
+								<exclude>**/*IntegrationTest.java
+								</exclude>
+								<exclude>**/IntegrationTest*.java
+								</exclude>
+							</excludes>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>integration_testing</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-surefire-plugin
+						</artifactId>
+						<configuration>
+							<includes>
+								<include>**/*IntegrationTest.java
+								</include>
+								<include>**/IntegrationTest*.java
+								</include>
+							</includes>
+							<excludes />
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
+	<reporting>
+		<plugins>
+			<plugin>
+				<artifactId>maven-surefire-report-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<showSuccess>true</showSuccess>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.7</version>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>javadoc</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+				<configuration>
+					<targetJdk>1.5</targetJdk>
+					<show>public</show>
+					<encoding>UTF-8</encoding>
+					<stylesheetfile>${basedir}/src/javadoc/stylesheet.css</stylesheetfile>
+         			<javadocDirectory>${basedir}/src/javadoc</javadocDirectory>
+          			<docfilessubdirs>true</docfilessubdirs>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-pmd-plugin</artifactId>
+				<version>2.5</version>
+				<configuration>
+					<targetJdk>1.5</targetJdk>
+					<linkXref>true</linkXref>
+					<sourceEncoding>UTF-8</sourceEncoding>
+				</configuration>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>cobertura-maven-plugin</artifactId>
+				<version>2.4</version>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jxr-plugin</artifactId>
+				<version>2.2</version>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>2.2</version>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>dependencies</report>
+							<report>project-team</report>
+							<report>mailing-list</report>
+							<report>cim</report>
+							<report>issue-tracking</report>
+							<report>license</report>
+							<report>scm</report>
+							<report>index</report>
+							<report>summary</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
+		</plugins>
+
+	</reporting>
+
+	<dependencies>
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>1.3</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-httpclient</groupId>
+			<artifactId>commons-httpclient</artifactId>
+			<version>3.1</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>1.4</version>
+		</dependency>
+		<dependency>
+			<groupId>jaxen</groupId>
+			<artifactId>jaxen</artifactId>
+			<version>1.1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.5</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jdom</groupId>
+			<artifactId>jdom</artifactId>
+			<version>1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>net.oauth</groupId>
+			<artifactId>oauth-core</artifactId>
+			<version>20081127</version>
+		</dependency>
+		<dependency>
+			<!--
+				this is here to override xom's transitive dependency on a crappy,
+				old, broken version of icu4j. Once xom fixes their POM we can remove
+				this dependency.
+			-->
+			<groupId>com.ibm.icu</groupId>
+			<artifactId>icu4j</artifactId>
+			<version>3.8</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.5.8</version>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-core</artifactId>
+			<version>0.9.17</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>0.9.17</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<repositories>
+		<repository>
+			<id>blc.releases</id>
+			<name>BLC</name>
+			<url>http://nexus.blueleftistconstructor.com/content/repositories/releases/</url>
+		</repository>
+		<repository>
+			<id>blc.snapshots</id>
+			<name>BLC</name>
+			<url>http://nexus.blueleftistconstructor.com/content/repositories/snapshots</url>
+		</repository>
+		<repository>
+			<id>fluido-skin-repository</id>
+			<name>fluido-skin Repository for Maven</name>
+			<url>http://fluido-skin.googlecode.com/svn/repo</url>
+			<layout>default</layout>
+		</repository>
+	</repositories>
+
+	<distributionManagement>
+		<repository>
+			<id>blc.releases</id>
+			<url>http://nexus.blueleftistconstructor.com/content/repositories/releases</url>
+		</repository>
+		<snapshotRepository>
+			<id>blc.snapshots</id>
+			<url>http://nexus.blueleftistconstructor.com/content/repositories/snapshots</url>
+		</snapshotRepository>
+		<site>
+			<id>blc.projects</id>
+			<name>blc.projects</name>
+			<url>file:///opt/projects/nfjc/${project.version}/</url>
+		</site>
+	</distributionManagement>
+
+</project>

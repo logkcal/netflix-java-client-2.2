@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<faqs title="Frequently Asked Questions" toplink="false">
+  <part id="general">
+    <title>General</title>
+
+    <faq id="offical">
+      <question>
+        Is this an official Netflix project?
+      </question>
+      <answer>
+        <p>Nope.  We're just doing this for fun.  This project is not associated with Netflix.</p>
+      </answer>
+    </faq>
+    
+    <faq id="support">
+      <question>
+        So who do I go to for support?
+      </question>
+      <answer>
+        <p>
+        	Right now your best bet is emailing one of the developers.  We're also working on getting an issue tracker up.
+        </p>
+      </answer>
+    </faq>
+    
+    <faq id="value-prop">
+      <question>
+        So what's the value proposition here?  Why should I use this?
+      </question>
+      <answer>
+        <p>
+        	Most practically, it shields you from having to worry about OAuth much.  Creating and signing requests, exchanging
+        	request tokens for access tokens, et. al., gets pretty tedious after a while.  We've taken care of that.
+        </p>
+      </answer>
+    </faq>
+  </part>
+  
+  <part id="usage">
+  	<title>Using the Client</title>  
+    <faq id="response-types">
+      <question>
+        What's with the API responses?  How come all I can get back is Strings?
+      </question>
+      <answer>
+        <p>
+        	Actually, you can get an <code>InputStream</code> back as well.  By default, calling <code>getResponse()</code> returns a string,
+        	because in the vast majority of cases, that's all that anyone will ever want or need.  If you call
+        	<code>getResponseStream()</code> though, you'll get a stream... handy for those humongous calls to <code>/catalog/index</code>. 
+        </p>
+      </answer>
+    </faq>
+    
+    <faq id="uri-ref">
+      <question>
+        How do I know what URIs to call?
+      </question>
+      <answer>
+        <p>
+        	All our documentation assumes you're familiar with REST in general and Netflix's use of it
+        	in particular, all of which is covered nicely by the <a href="http://developer.netflix.com/docs">offical docs</a>.
+        </p>
+      </answer>
+    </faq>
+    
+    <faq id="auth-modes">
+      <question>
+        What's the deal with this crazy OAuth handshake?  Can't I just get a user's credentials?
+      </question>
+      <answer>
+        <p>
+        	The three-part OAuth handshake is necessary to get access to user data without getting their credentials.  This can only be done by sending
+        	the user to the Netflix site to log in and authorize your application to act on their behalf.  Netflix will then redirect the user back to
+        	your site to continue with your use case.  Obviously, for this to happen, your app needs to be able to listen for HTTP traffic.  But that's
+        	OAuth, which was from the beginning conceived as a <em>web</em> protocol.  Embedded apps and devices need to use another means of obtaining
+        	access tokens, which is not covered by this library. 
+        </p>
+        <p>
+        	Note that obtaining user's credentials, even with their permission, is directly and explicitly against the Netflix API TOS.  In short,
+        	doing so may get you busted, and booted from the developer network, so don't do this!
+        </p>
+      </answer>
+    </faq>
+    
+  </part>
+</faqs>

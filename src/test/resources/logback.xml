@@ -1,0 +1,29 @@
+<configuration debug="false">
+	<property name="logfileName" value="nfclient.log"/>
+	<appender name="logfile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>${logfileName:-nfclient.log}</File>
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<Pattern>%-36(%d{ISO8601} [%thread] %-5level) %c{0} - %msg%n
+			</Pattern>
+		</layout>
+		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+			<maxIndex>10</maxIndex>
+			<FileNamePattern>${logfileName:-nfclient.log}.%i</FileNamePattern>
+		</rollingPolicy>
+		<triggeringPolicy
+			class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+			<MaxFileSize>10MB</MaxFileSize>
+		</triggeringPolicy>
+	</appender>
+  
+	<logger name="net" level="ERROR" />
+    <logger name="ch.qos" level="ERROR" />
+	<logger name="org" level="ERROR" />
+	<logger name="com" level="ERROR" />
+    <logger name="com.netflix.api.client.dal" level="ERROR" />
+	<logger name="com.netflix.api.client" level="ERROR" />
+	<logger name="NetflixCLI" level="ERROR" />
+	<root level="ERROR">
+		<appender-ref ref="logfile" />
+	</root>
+</configuration>

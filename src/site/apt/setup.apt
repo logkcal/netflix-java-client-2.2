@@ -1,0 +1,49 @@
+                                    ------
+                                    Netflix API Client Usage
+                                    ------
+                                    John Haren
+                                    ------
+                                    December 2008
+
+Setting up the Netflix API Client
+
+* Via Maven
+
+  To add the client as a Maven 2 dependency, first you'll need to add the BLC repository to your POM:
+  
++------------------------------------------+
+  <repositories>
+    ...
+    <repository>
+      <id>BLC</id>
+      <name>BLC</name>
+      <url>http://nexus.blueleftistconstructor.com/content/repositories/releases</url>
+    </repository>
+    ...
+  </repositories>
++------------------------------------------+
+
+  ...and then add the following dependency:
+
++------------------------------------------+
+  <dependencies>
+    ...
+    <dependency>
+      <groupId>com.lysergicjava.nfclient</groupId>
+      <artifactId>netflix-java-client</artifactId>
+      <version>2.2</version>
+    </dependency>
+	...
+  </dependencies>
++------------------------------------------+
+
+* From Binary
+
+  Download the client {{{./downloads.html}here}}.  Then, all you need to do is add the netflix-java-client.jar to your project's classpath.
+  Just import <<<com.netflix.api.client.NetflixAPIClient>>> when needed.
+ 
+* Building from source
+
+  First, you'll need to get the source, which is hosted in a Mercurial repository.  Once you have a Mercurial client installed, just run <<<hg clone http://www.blueleftistconstructor.com/projects/nfjc>>>
+  to pull the complete project.
+  You'll then need {{{http://maven.apache.org/index.html}Maven 2.0.8}} or greater to build the client.  Just run <<<mvn clean package>>> and you're good to go.

@@ -1,0 +1,155 @@
+                                    ------
+                                    Netflix API Client Usage
+                                    ------
+                                    John Haren
+                                    ------
+                                    December 2008
+                                     
+How to use the Netflix API Client
+
+  Before we start, we're assuming you've read the {{{http://developer.netflix.com/docs}Netflix API documentation}} you know what the Netflix API can do for you,
+  and that you've signed up as a Netflix API developer and have been issued a consumer key and secret.  If that's the case, let's get started.  
+  
+* Non-customer related requests
+
+  In the simplest cases, all you want to do is call the API to retrieve general information not tied to a Netflix customer -- to get metadata on a particular 
+  movie title, for instance.  You know from the Netflix docs that the way to do that is to place a HTTP GET request to the title detail URI: <<<http://api.netflix.com/catalog/titles/movies/\{titleID\}>>>.
+  So, to retreive the metadata for the Film "Fly Away Home" (movie ID# 512381) you'd send OAuth-signed request to <<<http://api.netflix.com/catalog/titles/movies/512381>>>.
+  The Netflix API client makes this easy:
+  
++------------------------------------------+
+  NetflixAPIClient apiClient = new NetflixAPIClient(myConsumerKey, myConsumerSecret);
+  String uri = APIEndpoints.MOVIE_URI + "/512381";
+  String details = null;
+  try
+  {
+    details = apiClient.makeConsumerSignedApiCall(uri, null, NetflixAPIClient.GET_METHOD_TYPE).getResponseBody();
+  }
+  catch (NetflixAPIException nae)
+  {
+    // handle the error...
+  }
++------------------------------------------+
+  
+  That's all there is to it!  The client has taken care of all the details: generating the OAuth signature, making the request, opening/closing 
+  the connection, and getting the results.  Also, you can see that we've exposed the common URI paths as constants in the <<<APIEndpoints>>> class.  
+  You can use them or not, it's your choice.
+  
+* A slightly more complex example
+
+  Let's say you want to use the search API to look for details on a particular actor's career.  In this case (and many others), you'll have to send some
+  query parameters along.  Again, the Netflix API makes life easy:
+
++------------------------------------------+
+  NetflixAPIClient apiClient = new NetflixAPIClient(myConsumerKey, myConsumerSecret);
+  String uri = "http://api.netflix.com/catalog/people";
+  HashMap<String, String> callParameters = new HashMap<String, String>();
+  callParameters.put("term", "Nathan Fillion");
+  String results = null;
+  try
+  {
+    NetflixAPIResponse response = apiClient.makeConsumerSignedApiCall(uri, callParameters, 
+    	NetflixAPIClient.GET_METHOD_TYPE);
+    results = response.getResponseBody();
+    int statusCode = response.getStatusCode();
+    if (statusCode == 200)
+    {
+      // process normally
+    }
+    else
+    {
+      // display error to user
+    }
+  }
+  catch (NetflixAPIException nae)
+  {
+    // handle the error...
+  }
++------------------------------------------+
+
+  The Netflix client handles everything: setting the query string, creating the OAuth header, the whole shebang.  What you get back is an
+  object of the <<<NetflixAPIResponse>>> class, which contains the response body from the API server, plus the HTTP status code (and status line, like
+  <<<200 Ok>>>, if you want it).  This makes it easy to make a request, check for any errors, and respond accordingly.
+  
+  Note that in the above example, the uri string was set manually. We could have called <<<APIEndpoints.PEOPLE_URI>>>, but we wanted to show the flexibility
+  of the client.
+  
+* Customer requests
+
+  Making requests on behalf of customers is, in general, only slightly more complex.  In fact, the only sticky part is getting an access token for 
+  a customer, which we'll cover later.  For now, let's assume you have a <<<NetflixAPICustomer>>> object with a valid access token.  All you need to do,
+  then, is:
+  
++------------------------------------------+
+  // assume valid NetflixAPICustomer 'customer'
+  NetflixAPIClient apiClient = new NetflixAPIClient(myConsumerKey, myConsumerSecret);
+  String uri = APIEndpoints.USER_URI + "/" + customer.getCustomerID() + "/queues/disc";
+  HashMap<String, String> callParameters = new HashMap<String, String>();
+  callParameters.put("title_ref", APIEndpoints.BASE_URI + "/catalog/titles/movies/70087215");
+  String results = null;
+  try
+  {
+    results = apiClient.makeCustomerAuthorizedApiCall(uri, customer, callParameters, 
+    	NetflixAPIClient.POST_METHOD_TYPE).getResponseBody();
+    int statusCode = response.getStatusCode();
+    if (statusCode == 200)
+    {
+      // process normally
+    }
+    else
+    {
+      // display error to user
+    }
+  }
+  catch (NetflixAPIException nae)
+  {
+    // handle the error...
+  }
++------------------------------------------+
+
+  What we've done here is added the movie "Outpost" to the user's queue.  The standard usage pattern holds -- you supply a URI, some parameters if
+  needed, and the HTTP method type -- but you also pass the customer on whose behalf you're operating.  The customer objects are pretty simple,
+  and don't make assumptions about how (or even if) you're persisting any information about them.  That being said, there are some guidelines 
+  and recommendations concerning customer interactions, which comes next.
+  
+  In order to do anything for a Netflix customer, you'll need to create an instance of the <<<NetflixAPICustomer>>>
+  class to represent them.  In order to do this, you'll first get an OAuthRequestToken.  The client makes this easy:
+  
++------------------------------------------+
+  ...
+  NetflixAPIClient apiClient = new NetflixAPIClient(myConsumerKey, myConsumerSecret);
+  ...
+  OAuthRequestToken reqToken = apiClient.getNewRequestToken();
++------------------------------------------+
+  
+  Next, you'll have to send the user off to Netflix so they can log in and validate the request token.  The client has a convenience method
+  that creates the URL to forward them to.  If you supply this method a callback URL (and you should) Netflix will send the customer back
+  to that url after the customer has approved your request:
+  
++------------------------------------------+
+  ...
+  NetflixAPIClient apiClient = new NetflixAPIClient(myConsumerKey, myConsumerSecret);
+  ...
+  OAuthRequestToken reqToken = apiClient.getNewRequestToken();
+  ...
+  String callbackURL = "http://example.com/netflix-login-success";
+  String redirectURL = getNetflixAuthorizationURL(requestToken, callbackURL);
+  
+  // redirect user to redirectURL
++------------------------------------------+
+
+  Then, when you know the user has authorized your request, you exchange the request token for an access token.  (The request token
+  will be returned to you by Netflix after customer auth, so you don't have to keep track of it yourself).  Again, the client makes this pretty painless:
+  
++------------------------------------------+
+  // "authorizedRequestToken" comes from Netflix's response
+  OAuthAccessToken accessToken = apiClient.exchangeRequestTokenForAccessToken(authorizedRequestToken);
+  NetflixAPICustomer customer = new NetflixAPICustomer(accessToken);
++------------------------------------------+
+
+  Now you're ready to rock.  The cool part is you can persist that access token on your end (in a DB, as a file, whatever) and you won't 
+  have to go through the customer auth part again.  The access token even gives you the customer's API ID number, so you don't even have to
+  look it up!  Now that's convenience.  If you do lose the token, or if the user invalidates it on the Netflix site (they can do that, y'know)
+  you can always go through the preceeding steps again.
+  
+  Happy Netflixing!

@@ -1,0 +1,11 @@
+target/*
+.settings
+.classpath
+.project
+.DS_Store
+src/test/resources/token*
+
+
+^nfclient.log
+syntax: regexp
+^src/test/resources/integration-test\.properties$

@@ -1,0 +1,18 @@
+                                    ------
+                                    Netflix API Client Usage
+                                    ------
+                                    John Haren
+                                    ------
+                                    December 2008
+                                    
+Project Features
+
+	* Dirt-simple, streamlined access to the Netflix API for Java.
+	
+	* Robust, low-computational-cost operation.
+	
+	* Doesn't do what you don't need.  No expensive object graphs or layers of
+	  code bureaucracy to wade through.
+	  
+
+	

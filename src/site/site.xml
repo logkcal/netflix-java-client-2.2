@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Netflix Java Client">
+	<!-- site-generation specific stuff -->
+	<skin>
+		<groupId>com.google.code</groupId>
+		<artifactId>fluido-skin</artifactId>
+		<version>1.2</version>
+	</skin>
+	
+	<body>
+		<menu name="Project Quick Ref">
+			<item name="Introduction" href="index.html" />
+			<item name="Usage" href="usage.html" />
+			<item name="Features" href="features.html" />
+			<item name="Setup" href="setup.html" />
+			<item name="Downloads" href="downloads.html" />
+			<item name="FAQ" href="faq.html" />
+		</menu>
+		<menu ref="reports" />
+	</body>
+
+</project>
